@@ -112,11 +112,11 @@ echo "server {
         index index.html index.htm index.nginx-debian.html;
         server_name localhost;
         location /http {
-                 try_files $uri $uri/ =404;
+                 try_files \$uri \$uri/ =404;
                  server_name              web.res1.local;
         }
         location /private {
-        	 try_files $uri $uri/ =404;
+        	 try_files \$uri \$uri/ =404;
                  server_name              admin.res1.local;
                  auth_basic               \"Administrator's Area\";
                  auth_basic_user_file     /etc/nginx/conf.d/.htpasswd;	
@@ -141,12 +141,18 @@ maxretry = 3
 
 enabled  = true" >> /etc/fail2ban/jail.conf
 
-if [ "$SetWeb" = "true" ];then
+if [ "$SetGateway" = "true" ];then
     echo ">>> operation steel active <<<"
 else
     echo "=> Demarage de fail2ban"
     systemctl start fail2ban
     systemctl enable fail2ban
+fi
+
+if [ "$SetGatewayr" = "true" ];then
+    echo ">>> operation steel active <<<"
+else
+    echo "export SetGateway=true" >> /home/$user/.bashrc
 fi
 
 # Fin de l'installation
