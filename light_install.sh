@@ -31,7 +31,8 @@ allow-hotplug enp0s3
 iface enp0s3 inet dhcp
 " > /etc/network/interfaces
 
-/usr/sbin/ifup enp0s3 enp0s8
+/usr/sbin/ifup enp0s3
+/usr/sbin/ifup enp0s8
 
 /sbin/sysctl net.ipv4.ip_forward=1
 
