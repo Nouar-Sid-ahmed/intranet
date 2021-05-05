@@ -84,3 +84,34 @@ range 10.242.0.10 10.242.0.255;
 systemctl start isc-dhcp-server
 
 systemctl enable isc-dhcp-server
+
+# Configuration de DnsMasq
+echo "=> Configuration de dnsmasq"
+echo "=> Configuration des paramètres dns"
+echo "domain-needed
+expand-hosts
+bogus-priv
+resolv-file=/etc/resolv.conf
+user=dnsmasq
+group=dnsmasq
+addn-hosts=/etc/dnsmasq-hosts.conf
+expand-hosts
+ 
+interface=eth0
+domain=client.res1.local
+cache-size=0
+ 
+" > /etc/dnsmasq.conf
+ 
+echo "Configuration des paramètres DHCP"
+echo "
+log-dhcp
+dhcp-range=10.242.0.10,10.242.0.255,24h
+dhcp-option=option:netmask,255.255.0.0
+dhcp-option=option:router,10.242.0.1
+dhcp-option=option:domain-name,\"LePetitRobinson\"
+" >> /etc/dnsmasq.conf
+ 
+#On autorise les requêtes dns dans le firewall
+firewall-cmd --add-service=dns --permanent
+firewall-cmd --reload
