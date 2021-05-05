@@ -1,4 +1,4 @@
-# Groupe de scholt_k and nouar_a
+# Groupe de nouar_a
 
 Mise en place d'une infrastructure simple en interne, en configurant différentes 
 solutions nécessaires au bon fonctionnement du parc informatique.
@@ -125,8 +125,6 @@ bash /home/$LOGNAME/web/main.sh
 ## Auteurs
 
 Sid-Ahmed NOUAR  [Linkedin](https://www.linkedin.com/in/sid-ahmed-nouar-4347b5159/)
-
-Kevin SCHOLTES  [Linkedin](https://www.linkedin.com/in/kevin-scholtes-etna/)
 
 ## Version
 
