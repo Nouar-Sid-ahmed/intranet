@@ -6,7 +6,7 @@ Nous avons choisi de définir comme plage d'Ip ``192.168.0.0/24`` nos machines a
 ## Initialisation
 
 **ATTENTION**: Durant votre configuration des trois machines il est absolument 
-obligatoire de définir un nom d'utilisateur identique.
+**obligatoire** de définir un nom d'utilisateur identique.
 
 * Commencez par installer trois machines sous Debian 10:
     * Une ``gateway`` avec une <ins>première carte réseau **bridge**</ins> et une <ins>deuxième configurée en **host-only**</ins>.
