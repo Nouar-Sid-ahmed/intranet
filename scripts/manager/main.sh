@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Petite introduction a la mise en place: 
+# Petite introduction a la mise en place:
 echo "===== Bonjour, et bienvenue dans la mise en place de votre intraNet sur votre manager. ====="
 echo ""
 
-# Installation des prés requit 
+# Installation des prés requit # dhcpd.conf
+#
 echo "==> Installation des prés requit:"
 echo ""
 echo "=> update apt"
@@ -19,14 +20,15 @@ echo ""
 apt install isc-dhcp-server
 echo ""
 echo "=> Installation de dnsmasq"
-echo ""
+echo ""# dhcpd.conf
+#
 apt install dnsmasq
 echo ""
 echo "===== Si vous avez suivi les instruction à la lettre jusqu'ici il ne vous reste plus   ====="
 echo "===== qu'à attendre la fin de l'auto setting.                                          ====="
 echo ""
 
-# On commence par definir le hostname de notre machine 
+# On commence par definir le hostname de notre machine
 echo "=> Definition du hostname"
 hostnamectl set-hostname manager.res1.local
 
@@ -83,7 +85,7 @@ authoritative;
 # have to hack syslog.conf to complete the redirection).
 #log-facility local7;
 
-# No service will be given on this subnet, but declaring it helps the 
+# No service will be given on this subnet, but declaring it helps the
 # DHCP server to understand the network topology.
 
 #subnet 10.152.187.0 netmask 255.255.255.0 {
@@ -174,17 +176,35 @@ echo "=> Ajout du service au démarrage"
 systemctl enable isc-dhcp-server
 
 # Configuration de DnsMasq
-echo "=> Configuration de DnsMasq"
+echo "=> Configuration de dnsmasq"
+echo "=> Configuration des paramètres dns dns"
 echo "domain-needed
 expand-hosts
 bogus-priv
+resolv-file=/etc/resolv.conf
+user=dnsmasq
+group=dnsmasq
+addn-hosts=/etc/dnsmasq-hosts.conf
+expand-hosts
 
 interface=eth0
 domain=client.res1.local
 cache-size=0
 
-dhcp-range=192.168.0.10,192.168.0.110,24h
 " > /etc/dnsmasq.conf
+
+echo "Configuration des paramètres DHCP"
+echo "
+log-dhcp
+dhcp-range=192.168.0.10,192.168.0.110,24h
+dhcp-option=option:netmask,255.255.255.0
+dhcp-option=option:router,192.168.0.1
+dhcp-option=option:domain-name,res1.local
+" >> /etc/dnsmasq.conf
+
+#On autorise les requêtes dns dans le firewall
+firewall-cmd --add-service=dns --permanent
+firewall-cmd --reload
 
 echo "=> Démarage du serveur DnsMasq"
 /etc/init.d/dnsmasq restart
@@ -192,7 +212,7 @@ echo "=> Démarage du serveur DnsMasq"
 echo "=> Ajout du service au démarrage"
 /etc/init.d/dnsmasq enable
 
-# Ajout du banner de connexion ssh                                              
+# Ajout du banner de connexion ssh
 if [ "$SetManager" = "true" ];then
     echo ">>> operation steel active <<<"
 else
@@ -200,8 +220,8 @@ else
     message="Toute altération du système à des fins malveillantes sera sanction\
 née"
     echo $message | tee /etc/issue /etc/issue.net
-    echo "Banner /etc/issue.net                                                 
-    PermitRootLogin no                                                          
+    echo "Banner /etc/issue.net
+    PermitRootLogin no
     " >> /etc/ssh/sshd_config
 fi
 if [ "$SetManager" = "true" ];then
@@ -232,4 +252,3 @@ do
     fi
 done
 systemctl reboot
-
