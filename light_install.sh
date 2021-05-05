@@ -31,7 +31,9 @@ allow-hotplug enp0s3
 iface enp0s3 inet dhcp
 " > /etc/network/interfaces
 
-/usr/sbin/ifup enp0s3
+/usr/sbin/ifup enp0s3 enp0s8
+
+/sbin/sysctl net.ipv4.ip_forward=1
 
 sudo /sbin/iptables -t nat -A POSTROUTING ! -d 10.242.0.0/16 -o enp0s3 -j MASQUERADE
 
@@ -53,7 +55,7 @@ DHCPDv4_CONF=/etc/dhcp/dhcpd.conf
 
 # On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
 #       Separate multiple interfaces with spaces, e.g. \"eth0 eth1\".
-INTERFACESv4=\"enp0s3\"
+INTERFACESv4=\"enp0s8\"
 INTERFACESv6=\"\"
 " > /etc/default/isc-dhcp-server
 
