@@ -6,7 +6,7 @@ echo ""
 
 # Installation des prés requit # dhcpd.conf
 #
-echo "==> Installation des prés requit:"
+echo "==> Installation des prérequis:"
 echo ""
 echo "=> update apt"
 apt update
@@ -33,7 +33,8 @@ echo "=> Definition du hostname"
 hostnamectl set-hostname manager.res1.local
 
 # Configuration du reseau
-echo "nameserver 8.8.8.8" > /etc/resolve.conf
+#resolv.conf sert à donner un serveur DNS
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 # Configuration du dhcpd
 echo "=> Configuration du dhcp server"
@@ -49,11 +50,12 @@ DHCPDv4_CONF=/etc/dhcp/dhcpd.conf
 
 # Additional options to start dhcpd with.
 #       Don't use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead
-#OPTIONS=""
+#OPTIONS=\"\"
 
 # On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
 #       Separate multiple interfaces with spaces, e.g. \"eth0 eth1\".
-INTERFACESv4=\"enp0s3\"
+#C'est du côté de 10.242.0.0 que les clients se connectent, donc la deuxième carte
+INTERFACESv4=\"enp0s8\"
 INTERFACESv6=\"\"
 " > /etc/default/isc-dhcp-server
 
@@ -93,9 +95,9 @@ authoritative;
 
 # This is a very basic subnet declaration.
 
-subnet  192.168.0.2 netmask 255.255.255.0 {
-   option routers  192.168.0.2;
-   range  192.168.0.10  192.168.0.110;
+subnet  10.242.0.0 netmask 255.255.0.0 {
+   option routers  10.242.0.2;
+   range  10.242.0.10  10.242.0.110;
   #option routers rtr-239-0-1.example.org, rtr-239-0-2.example.org;
 }
 
@@ -187,7 +189,7 @@ group=dnsmasq
 addn-hosts=/etc/dnsmasq-hosts.conf
 expand-hosts
 
-interface=eth0
+interface=enp0s8
 domain=client.res1.local
 cache-size=0
 
@@ -196,15 +198,11 @@ cache-size=0
 echo "Configuration des paramètres DHCP"
 echo "
 log-dhcp
-dhcp-range=192.168.0.10,192.168.0.110,24h
-dhcp-option=option:netmask,255.255.255.0
-dhcp-option=option:router,192.168.0.1
+dhcp-range=10.242.0.10,10.242.0.110,24h
+dhcp-option=option:netmask,255.255.0.0
+dhcp-option=option:router,10.242.0.1
 dhcp-option=option:domain-name,res1.local
 " >> /etc/dnsmasq.conf
-
-#On autorise les requêtes dns dans le firewall
-firewall-cmd --add-service=dns --permanent
-firewall-cmd --reload
 
 echo "=> Démarage du serveur DnsMasq"
 /etc/init.d/dnsmasq restart

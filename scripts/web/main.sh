@@ -92,7 +92,7 @@ enabled = true
 port = http,https
 filter = banbadrequest
 logpath = /var/log/nginx/error.log
-logpath = /var/log/nginx/access.log
+	  /var/log/nginx/access.log
 maxretry = 3
 
 [apache-noscript]
